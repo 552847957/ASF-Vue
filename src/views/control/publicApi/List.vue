@@ -5,7 +5,7 @@
       <a-row type="flex" justify="space-around" :gutter="48">
         <a-col :md="18" :sm="24">
           <a-button v-action:create type="primary" @click="$refs.add.show()" icon="plus" class="right10">新增</a-button>
-           <a-button-group class="right10">
+          <a-button-group class="right10">
             <a-button type="primary" @click="handleExport">导出</a-button>
             <a-button type="primary" @click="$refs.immodal.import()">导入</a-button>
           </a-button-group>
@@ -41,7 +41,8 @@
       <span slot="createTime" slot-scope="text">
         {{ text | dayFormat('YYYY-MM-DD HH:mm') }}
       </span>
-      <span slot="apiTemplate" slot-scope="text">
+      <span slot="apiTemplate" slot-scope="text, record">
+        <a-tag v-for="item in record.httpMethods" :key="item" color="#87d068">{{ item }}</a-tag>
         <ellipsis :length="35" tooltip>
           {{ text }}
         </ellipsis>
@@ -103,7 +104,7 @@ export default {
       },
       // 列表属性
       table: {
-        selectedRowKeys:[],
+        selectedRowKeys: [],
         loading: false,
         dataSource: [],
         columns: [
@@ -159,11 +160,11 @@ export default {
           }
         ]
       },
-      selectRows:[],
+      selectRows: []
     }
   },
   components: {
-    STable, PublicApiAdd, PublicApiEdit, PublicApiDetail, Ellipsis,ImportModal
+    STable, PublicApiAdd, PublicApiEdit, PublicApiDetail, Ellipsis, ImportModal
   },
   methods: {
     /**
@@ -206,9 +207,9 @@ export default {
     /**
      * 导出菜单
      */
-    handleExport(){
+    handleExport () {
       const _this = this
-      let param={list:_this.selectRows}      
+      const param = { list: _this.selectRows }
       if (_this.selectRows === undefined || _this.selectRows.length === 0) {
         _this.$notification['warning']({
           message: '提示',
@@ -220,39 +221,38 @@ export default {
       this.$confirm({ title: '导出菜单',
         content: `是否导出菜单？`,
         onOk: () => {
-          _this.table.loading=false              
-              let json= JSON.stringify(_this.selectRows)
-              _this.exportRaw('public_api.json',json)
-              _this.loadDataing()
-              _this.table.expandedRowKeys=[]
-              _this.table.selectedRowKeys=[]
-              _this.$message.success(`导出菜单成功`)
-         
+          _this.table.loading = false
+          const json = JSON.stringify(_this.selectRows)
+          _this.exportRaw('public_api.json', json)
+          _this.loadDataing()
+          _this.table.expandedRowKeys = []
+          _this.table.selectedRowKeys = []
+          _this.$message.success(`导出菜单成功`)
         }
       })
     },
-    //表格勾选事件
-    onSelectChange(selectedRowKeys,selectedRows){
-      const _this=this
+    // 表格勾选事件
+    onSelectChange (selectedRowKeys, selectedRows) {
+      const _this = this
       _this.table.selectedRowKeys = selectedRowKeys
-      _this.selectRows=selectedRows
+      _this.selectRows = selectedRows
     },
-    //保存txt\json文档到本地
-    fakeClick(obj){
-      var ev = document.createEvent("MouseEvents");
-      ev.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-      obj.dispatchEvent(ev);
+    // 保存txt\json文档到本地
+    fakeClick (obj) {
+      var ev = document.createEvent('MouseEvents')
+      ev.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+      obj.dispatchEvent(ev)
     },
-    //保存txt\json文档到本地
-    exportRaw(name,data){
-      var urlObject = window.URL || window.webkitURL || window;
-      var export_blob = new Blob([data]);
-      var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-      //console.log('save_link',save_link)
-      save_link.href = urlObject.createObjectURL(export_blob);
-      save_link.download = name;
-      this.fakeClick(save_link);
-    },
+    // 保存txt\json文档到本地
+    exportRaw (name, data) {
+      var urlObject = window.URL || window.webkitURL || window
+      var export_blob = new Blob([data])
+      var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+      // console.log('save_link',save_link)
+      save_link.href = urlObject.createObjectURL(export_blob)
+      save_link.download = name
+      this.fakeClick(save_link)
+    }
   },
   created () {
     this.loadDataing()

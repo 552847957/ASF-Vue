@@ -34,7 +34,7 @@
 
       <!--操作功能列表-->
       <div class="table-page-search-wrapper" style="margin-bottom: 10px; text-align: right;">
-        <a-button type="primary" @click="$refs.add.show( menuDetails.id, menuDetails.name )" icon="plus" class="right10">新增功能</a-button>
+        <a-button v-action:action_create type="primary" @click="$refs.add.show( menuDetails.id, menuDetails.name )" icon="plus" class="right10">新增功能</a-button>
       </div>
       <a-table
         ref="table"
@@ -42,6 +42,9 @@
         :columns="table.columns"
         :dataSource="table.dataSource"
         :pagination="false">
+        <span slot="name" slot-scope="text,record">
+          {{ text }} <a-tag color="blue">{{ record.code }}</a-tag>
+        </span>
         <span slot="isLogger" slot-scope="text">
           <a-badge v-if="text" status="success" text="记录"/>
           <a-badge v-else status="error" text="不记录"/>
@@ -53,15 +56,19 @@
         <span slot="createTime" slot-scope="text">
           {{ text*1000 | moment('YYYY-MM-DD HH:mm') }}
         </span>
+        <span slot="apiTemplate" slot-scope="text, record">
+          <a-tag v-for="item in record.httpMethods" :key="item" color="#87d068">{{ item }}</a-tag>
+          {{ text }}
+        </span>
         <span slot="sort" slot-scope="text, record">
           <modify-sort :text="text" :id="record.id" @complete="loadActionsData" type="action"></modify-sort>
         </span>
         <span slot="action" slot-scope="text, record, index">
-          <a @click="$refs.edit.show(record, menuDetails.id, menuDetails.name )" v-if="!record.isSystem">编辑</a>
-          <a v-else disabled>编辑</a>
+          <a v-action:action_modify @click="$refs.edit.show(record, menuDetails.id, menuDetails.name )" v-if="!record.isSystem">编辑</a>
+          <a v-action:action_modify v-else disabled>编辑</a>
           <a-divider type="vertical"/>
-          <a @click="handleDelete(record.id, index)" v-if="!record.isSystem">删除</a>
-          <a v-else disabled>删除</a>
+          <a v-action:action_delete @click="handleDelete(record.id, index)" v-if="!record.isSystem">删除</a>
+          <a v-action:action_delete v-else disabled>删除</a>
         </span>
       </a-table>
     </a-spin>
@@ -177,7 +184,10 @@ export default {
 const ActionColumns = [
   {
     title: '功能名称',
-    dataIndex: 'name'
+    dataIndex: 'name',
+    scopedSlots: {
+      customRender: 'name'
+    }
   },
   {
     title: '状态',
@@ -202,7 +212,10 @@ const ActionColumns = [
   },
   {
     title: 'API 地址',
-    dataIndex: 'apiTemplate'
+    dataIndex: 'apiTemplate',
+    scopedSlots: {
+      customRender: 'apiTemplate'
+    }
   },
   {
     title: '描述',

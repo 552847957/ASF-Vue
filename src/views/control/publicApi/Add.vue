@@ -14,9 +14,13 @@
         <a-form-item label="API 名称" v-bind="layout">
           <a-input placeholder="请输入公共 API 名称 " v-decorator="formDecorator.name" style="width: 50%"/>
         </a-form-item>
-        <a-form-item label="API 地址" v-bind="layout">
-          <a-input placeholder="API 地址" v-decorator="formDecorator.apiTemplate"/>
+        <a-form-item label="Http Method" v-bind="layout">
+          <a-select mode="multiple" placeholder="请选择Http请求方法" :options="httpMethods" v-decorator="formDecorator.httpMethods">
+          </a-select>
         </a-form-item>
+        <a-form-item label="API 地址" v-bind="layout">
+          <a-input placeholder="API 地址" v-decorator="formDecorator.apiTemplate" >
+          </a-input></a-form-item>
         <a-form-item label="描述" v-bind="layout" >
           <a-textarea placeholder="请输入公共 API 描述" v-decorator="formDecorator.description">
           </a-textarea>
@@ -36,12 +40,23 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
+      httpMethods: [
+        { label: 'Post', value: 'POST' },
+        { label: 'Get', value: 'GET' },
+        { label: 'Put', value: 'PUT' },
+        { label: 'Delete', value: 'DELETE' }
+      ],
       // 表单描述
       formDecorator: {
         name: ['name', {
           rules: [
             { required: true, message: '名称不能为空' },
             { max: 100 }
+          ]
+        }],
+        httpMethods: ['httpMethods', {
+          rules: [
+            { required: true, message: '请求方法不能为空' }
           ]
         }],
         apiTemplate: ['apiTemplate',

@@ -4,10 +4,10 @@
     <div class="table-page-search-wrapper">
       <a-row type="flex" justify="space-around" :gutter="48">
         <a-col :md="18" :sm="24">
-          <a-button type="primary" @click="$refs.add.show()" icon="plus" class="right10">新增</a-button>
+          <a-button v-action:menu_create type="primary" @click="$refs.add.show()" icon="plus" class="right10">新增</a-button>
           <a-button-group class="right10">
-            <a-button type="primary" @click="handleExport">导出</a-button>
-            <a-button type="primary" @click="$refs.immodal.import()">导入</a-button>
+            <a-button v-action:export type="primary" @click="handleExport">导出</a-button>
+            <a-button v-action:import type="primary" @click="$refs.immodal.import()">导入</a-button>
           </a-button-group>
           <a-select placeholder="请选择" v-model="queryParam.enable" style="width:100px;" @change="loadDataing">
             <a-select-option :value="-1">API 状态</a-select-option>
@@ -42,7 +42,7 @@
       :dataSource="table.dataSource"
       @expandedRowsChange="(e)=>{this.table.expandedRowKeys=e}">
       <span slot="id" slot-scope="text">
-        <router-link :to="{ name: 'asf_permission_details', query: {data: text }}" >{{ text }}</router-link>
+        <router-link :to="{ name: 'asf_menu_details', query: {data: text }}" >{{ text }}</router-link>
       </span>
       <span slot="icon" slot-scope="text">
         <a-icon v-if="text" :type="text" />
@@ -66,17 +66,17 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template>
-          <router-link :to="{ name: 'asf_permission_details', query: {data: record.id }}" >详情</router-link>
+          <router-link v-action:menu_details :to="{ name: 'asf_menu_details', query: {data: record.id }}" >详情</router-link>
           <a-divider type="vertical" />
           <a-dropdown>
             <a class="ant-dropdown-link">更多
               <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item :disabled="record.isSystem" @click="$refs.edit.show(record)">
+              <a-menu-item v-action:menu_modify :disabled="record.isSystem" @click="$refs.edit.show(record)">
                 编辑
               </a-menu-item>
-              <a-menu-item :disabled="record.isSystem" @click="handleDelete(record.id,record.name)" >
+              <a-menu-item v-action:menu_delete :disabled="record.isSystem" @click="handleDelete(record.id,record.name)" >
                 删除
               </a-menu-item>
             </a-menu>

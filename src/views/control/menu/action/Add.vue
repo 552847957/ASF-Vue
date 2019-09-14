@@ -23,6 +23,10 @@
         <a-form-item label="是否记录日志" v-bind="layout">
           <a-switch checkedChildren="记录" unCheckedChildren="不记录" v-decorator="formDecorator.isLogger"/>
         </a-form-item>
+        <a-form-item label="Http Method" v-bind="layout">
+          <a-select mode="multiple" placeholder="请选择Http请求方法" :options="httpMethods" v-decorator="formDecorator.httpMethods">
+          </a-select>
+        </a-form-item>
         <a-form-item label="API 地址" v-bind="layout">
           <a-input placeholder="请输入功能请求的 API 地址，动态参数通过正则表达式匹配" v-decorator="formDecorator.apiTemplate" />
         </a-form-item>
@@ -46,7 +50,12 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-
+      httpMethods: [
+        { label: 'Post', value: 'POST' },
+        { label: 'Get', value: 'GET' },
+        { label: 'Put', value: 'PUT' },
+        { label: 'Delete', value: 'DELETE' }
+      ],
       menuId: '',
       menuName: '',
       // 表单描述
@@ -56,6 +65,11 @@ export default {
           rules: [
             { required: true, message: '功能标识不能为空' },
             { max: 30 }
+          ]
+        }],
+        httpMethods: ['httpMethods', {
+          rules: [
+            { required: true, message: '请求方法不能为空' }
           ]
         }],
         name: ['name', {

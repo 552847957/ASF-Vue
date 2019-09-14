@@ -52,18 +52,18 @@ export const asyncRouterMap = [{
         // 菜单
         {
           path: '/control/menu',
-          name: 'asf_permission',
+          name: 'asf_menu',
           component: RouteView,
           redirect: '/control/menu/list',
           children: [
             {
               path: '/control/menu/details',
-              name: 'asf_permission_details',
+              name: 'asf_menu_details',
               component: MenuDetails
             },
             {
               path: '/control/menu/list',
-              name: 'asf_permission_list',
+              name: 'asf_menu_list',
               component: MenuList
             }
           ]
