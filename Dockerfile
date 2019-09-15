@@ -1,5 +1,4 @@
 FROM nginx AS base
-WORKDIR /app
 EXPOSE 80
 
 # 开始构建nodejs环境进行发布asf
@@ -11,7 +10,11 @@ RUN npm install  \
     && npm run build
 
 FROM base AS final
+# 加我们自己的配置 default.conf 在下面
+COPY --from=build /src/nginx /etc/nginx/conf.d/ 
 COPY --from=build /src/dist /usr/share/nginx/html/
+
+
 
 
 
